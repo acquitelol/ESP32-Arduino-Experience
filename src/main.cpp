@@ -3,8 +3,6 @@
 #include "main.h"
 #include "utilities.h"
 
-int DELAY = 50;
-
 void setup()
 {
   Serial.begin(9600);
