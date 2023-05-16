@@ -40,9 +40,9 @@ void Utilities::authenticateWifi()
         connectionAttempts++;
         Serial.println("Checking for Wifi...");
 
-        Pin::setState(LED, HIGH);
+        Pin::setState(LED_PIN, HIGH);
         delay(100);
-        Pin::setState(LED, LOW);
+        Pin::setState(LED_PIN, LOW);
 
         if (connectionAttempts >= 300)
         {
