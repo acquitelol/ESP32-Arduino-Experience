@@ -1,7 +1,12 @@
 #include <Arduino.h>
 #include <functional>
+#include <InfluxDb.h>
+#include "WiFi.h"
 #include "main.h"
 #include "utilities.h"
+#include "auth.h"
+
+Influxdb influx(INFLUXDB_HOST);
 
 void setup()
 {
