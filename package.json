@@ -4,7 +4,7 @@
   "scripts": {
     "pio-target": "pio run -t",
     "build": "yarn pio-target upload",
-    "monitor": "pio device monitor --filter colorize --filter time",
+    "monitor": "pio device monitor --filter time",
     "start": "yarn build && yarn monitor"
   },
   "license": "MIT"

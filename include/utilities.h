@@ -2,7 +2,16 @@
 #include <cstdlib>
 #include <ctime>
 #include <functional>
+#include <string>
 
-void setState(int led, int state, int time);
-int getRandomNumber(int lowest, int highest);
-void authenticateWifi();
+namespace Pin
+{
+    extern void setState(int pin, int state);
+    extern void setState(int pin, int state, int time);
+}
+
+namespace Utilities
+{
+    extern void authenticateWifi();
+    extern int generateRandomNumber(int lowest, int highest);
+}
