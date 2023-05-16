@@ -7,5 +7,5 @@
     "monitor": "pio device monitor --filter time",
     "start": "yarn build && yarn monitor"
   },
-  "license": "MIT"
+  "license": "GPL-3.0"
 }

@@ -4,5 +4,5 @@
 #define DEVICE "ESP32"
 
 #define LED 2
-#define DELAY 50
+#define DELAY 1000
 #define DIVIDER "-~-~-~-~-~-~-~-~-~-~-~"

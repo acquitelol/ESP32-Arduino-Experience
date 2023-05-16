@@ -35,6 +35,6 @@ void loop()
     Serial.printf("InfluxDB write failed: %s\n", client.getLastErrorMessage().c_str());
   }
 
-  Serial.printf("Waiting %dms...\n", DELAY * 100);
-  delay(DELAY * 100);
+  Serial.printf("Waiting %dms...\n", DELAY);
+  delay(DELAY);
 }
