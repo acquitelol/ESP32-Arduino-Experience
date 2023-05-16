@@ -11,6 +11,6 @@ void setup()
 
 void loop()
 {
-  setState(HIGH, DELAY * getRandomNumber(8, 16));
-  setState(LOW, DELAY * getRandomNumber(8, 16));
+  setState(LED, HIGH, DELAY * getRandomNumber(8, 16));
+  setState(LED, LOW, DELAY * getRandomNumber(8, 16));
 }

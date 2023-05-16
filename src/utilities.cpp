@@ -2,14 +2,13 @@
 #include <functional>
 #include <cstdlib>
 #include <ctime>
-#include "main.h"
 #include "utilities.h"
 
-void setState(int STATE, int DELAY)
+void setState(int led, int state, int time)
 {
-  Serial.printf("%s World! Delay: %d\n", STATE ? "Hello" : "Goodbye", DELAY);
-  digitalWrite(LED, STATE);
-  delay(DELAY);
+  Serial.printf("%s World! Delay: %d\n", state ? "Hello" : "Goodbye", time);
+  digitalWrite(led, state);
+  delay(time);
 }
 
 int getRandomNumber(int lowest, int highest) {
