@@ -49,6 +49,8 @@ void loop()
 
     Serial.printf("Waiting %dms...\n", DELAY);
     Serial.printf("%s\n", DIVIDER);
+    
+    digitalWrite(LED_PIN, LOW);
     delay(DELAY);
   } else {
     Serial.printf("Temperature: %f Humidity: %f\n", temperature, humidity);
