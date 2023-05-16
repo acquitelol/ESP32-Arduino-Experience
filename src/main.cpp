@@ -10,8 +10,8 @@ void setup()
   Serial.begin(9600);
   while (!Serial) {};
 
-  Utilities::authenticateWifi();
   pinMode(LED, OUTPUT);
+  Utilities::authenticateWifi();
 
   client.validateConnection()
     ? Serial.printf("Connected to InfluxDB: %s\n", client.getServerUrl().c_str())
