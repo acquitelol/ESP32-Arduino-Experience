@@ -2,8 +2,7 @@
   "name": "rosies-arduino-test",
   "version": "1.0.0",
   "scripts": {
-    "pio-target": "pio run -t",
-    "build": "yarn pio-target upload",
+    "build": "pio run -t upload",
     "monitor": "pio device monitor --filter time",
     "start": "yarn build && yarn monitor"
   },
