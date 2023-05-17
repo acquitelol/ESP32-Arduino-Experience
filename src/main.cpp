@@ -1,6 +1,6 @@
-#include <main.h>
-#include <utilities.h>
-#include <auth.h>
+#include "main.h"
+#include "utilities.h"
+#include "auth.h"
 
 InfluxDBClient client(INFLUXDB_HOST, INFLUXDB_ORGANISATION, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
 Point sensor("Readings");
@@ -11,9 +11,9 @@ void setup()
   Serial.begin(9600);
   while (!Serial) {};
 
-  dht.begin();
   pinMode(LED_PIN, OUTPUT);
   Utilities::authenticateWifi();
+  dht.begin();
 
   sensor.addField("Device", DEVICE);
   sensor.addField("SSID", WIFI_SSID);
@@ -49,7 +49,7 @@ void loop()
 
     Serial.printf("Waiting %dms...\n", DELAY);
     Serial.printf("%s\n", DIVIDER);
-    
+
     digitalWrite(LED_PIN, LOW);
     delay(DELAY);
   } else {
