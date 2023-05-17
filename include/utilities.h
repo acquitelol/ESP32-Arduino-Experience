@@ -1,8 +1,6 @@
 #include "Arduino.h"
-#include <cstdlib>
+#include <iostream>
 #include <ctime>
-#include <functional>
-#include <string>
 
 namespace Pin
 {

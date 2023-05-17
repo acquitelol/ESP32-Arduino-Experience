@@ -13,6 +13,11 @@ void setup()
 
   pinMode(LED_PIN, OUTPUT);
   Utilities::authenticateWifi();
+
+  client.validateConnection()
+    ? Serial.printf("Connected to InfluxDB: %s\n", client.getServerUrl().c_str())
+    : Serial.printf("InfluxDB connection failed: %s\n", client.getLastErrorMessage().c_str());
+
   dht.begin();
 
   sgp.begin()
@@ -21,11 +26,6 @@ void setup()
 
   sensor.addField("Device", DEVICE);
   sensor.addField("SSID", WIFI_SSID);
-
-  client.validateConnection()
-    ? Serial.printf("Connected to InfluxDB: %s\n", client.getServerUrl().c_str())
-    : Serial.printf("InfluxDB connection failed: %s\n", client.getLastErrorMessage().c_str());
-
   Serial.printf("%s\n", DIVIDER);
 }
 
@@ -44,7 +44,7 @@ void loop()
   }
 
   if (!isnan(temperature) && !isnan(humidity)) {
-    digitalWrite(LED_PIN, HIGH);
+    Pin::setState(LED_PIN, HIGH);
 
     sensor.clearFields();
     sensor.addField("Temperature", temperature);
@@ -67,7 +67,7 @@ void loop()
     Serial.printf("Waiting %dms...\n", DELAY);
     Serial.printf("%s\n", DIVIDER);
 
-    digitalWrite(LED_PIN, LOW);
+    Pin::setState(LED_PIN, LOW);
     delay(DELAY);
   } else {
     Serial.printf("Temperature: %f Humidity: %f\n", temperature, humidity);
