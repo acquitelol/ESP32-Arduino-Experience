@@ -14,4 +14,5 @@ namespace Utilities
 {
     extern void authenticateWifi();
     extern int generateRandomNumber(int lowest, int highest);
+    extern uint32_t getAbsoluteHumidity(float temperature, float humidity);
 }

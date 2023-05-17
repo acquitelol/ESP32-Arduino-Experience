@@ -5,15 +5,19 @@
 InfluxDBClient client(INFLUXDB_HOST, INFLUXDB_ORGANISATION, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
 Point sensor("Readings");
 DHT dht(DHT_PIN, DHT_TYPE);
+Adafruit_SGP30 sgp;
 
 void setup()
 {
   Serial.begin(9600);
-  while (!Serial) {};
 
   pinMode(LED_PIN, OUTPUT);
   Utilities::authenticateWifi();
   dht.begin();
+
+  sgp.begin()
+    ? Serial.println("Connected to SGP30")
+    : Serial.println("Failed to connect to SGP30");
 
   sensor.addField("Device", DEVICE);
   sensor.addField("SSID", WIFI_SSID);
@@ -29,6 +33,15 @@ void loop()
 {
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
+  sgp.setHumidity(humidity);
+
+  if (!sgp.IAQmeasure()) {
+    Serial.println("Measurement failed");
+  }
+
+  if (!sgp.IAQmeasureRaw()) {
+    Serial.println("Raw Measurement failed");
+  }
 
   if (!isnan(temperature) && !isnan(humidity)) {
     digitalWrite(LED_PIN, HIGH);
@@ -36,6 +49,10 @@ void loop()
     sensor.clearFields();
     sensor.addField("Temperature", temperature);
     sensor.addField("Humidity", humidity);
+    sensor.addField("Carbon Dioxide", sgp.eCO2);
+    sensor.addField("TVOC", sgp.TVOC);
+    sensor.addField("Ethanol", sgp.rawEthanol);
+    sensor.addField("Hydrogen", sgp.rawH2);
 
     Serial.printf("Writing: %s\n", client.pointToLineProtocol(sensor).c_str());
 
