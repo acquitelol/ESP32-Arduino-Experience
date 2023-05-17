@@ -68,3 +68,12 @@ int Utilities::generateRandomNumber(int lowest, int highest)
     std::srand(std::time(nullptr));
     return lowest + (std::rand() % (highest - lowest + 1));
 }
+
+uint32_t Utilities::getAbsoluteHumidity(float temperature, float humidity) {
+    const float absoluteHumidity = 216.7f * (
+        (humidity / 100.0f) * 6.112f 
+            * exp((17.62f * temperature) / (243.12f + temperature)) 
+            / (273.15f + temperature)
+    );
+    return static_cast<uint32_t>(1000.0f * absoluteHumidity);
+}

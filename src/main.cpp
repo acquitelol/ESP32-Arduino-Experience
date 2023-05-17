@@ -33,7 +33,7 @@ void loop()
 {
   float temperature = dht.readTemperature();
   float humidity = dht.readHumidity();
-  sgp.setHumidity(humidity);
+  sgp.setHumidity(Utilities::getAbsoluteHumidity(temperature, humidity));
 
   if (!sgp.IAQmeasure()) {
     Serial.println("Measurement failed");
