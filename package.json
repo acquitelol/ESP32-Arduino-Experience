@@ -1,5 +1,5 @@
 {
-  "name": "rosies-arduino-test",
+  "name": "esp32-sensor-records",
   "version": "1.0.0",
   "scripts": {
     "build": "clear && pio run -t upload",
