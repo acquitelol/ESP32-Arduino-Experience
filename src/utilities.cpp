@@ -5,10 +5,8 @@
 void Utilities::authenticateWifi() 
 {   
     PRINT_DIVIDER();
-
     Wifi::setup();
     Wifi::hostname();
-
     delay(300);
 
     if (Wifi::connect())
@@ -21,8 +19,8 @@ void Utilities::authenticateWifi()
         return authenticateWifi();
     }
 
-    PRINT_DIVIDER();
     delay(300);
+    PRINT_DIVIDER();
     Wifi::debug();
 }
 
