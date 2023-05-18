@@ -1,11 +1,10 @@
-#include "main.h"
-#include "utilities.h"
+#include "common.h"
 #include "auth.h"
+#include "utilities.h"
+#include "internal.h"
 
-InfluxDBClient client(INFLUXDB_HOST, INFLUXDB_ORGANISATION, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
-Point sensor("Readings");
-DHT dht(DHT_PIN, DHT_TYPE);
-Adafruit_SGP30 sgp;
+using namespace strict_variant;
+using namespace Internal;
 
 void setup()
 {
@@ -15,18 +14,18 @@ void setup()
   Utilities::authenticateWifi();
 
   client.validateConnection()
-    ? Serial.printf("Connected to InfluxDB: %s\n", client.getServerUrl().c_str())
-    : Serial.printf("InfluxDB connection failed: %s\n", client.getLastErrorMessage().c_str());
+    ? Serial.printf("Connected to InfluxDB: %s.\n", client.getServerUrl().c_str())
+    : Serial.printf("InfluxDB connection failed: %s.\n", client.getLastErrorMessage().c_str());
+
+  sgp.begin()
+    ? Serial.println("Connected to SGP30 successfully.")
+    : Serial.println("Failed to connect to SGP30.");
 
   dht.begin();
 
-  sgp.begin()
-    ? Serial.println("Connected to SGP30")
-    : Serial.println("Failed to connect to SGP30");
-
-  sensor.addField("Device", DEVICE);
+  sensor.addField("Module", MODULE);
   sensor.addField("SSID", WIFI_SSID);
-  Serial.printf("%s\n", DIVIDER);
+  PRINT_DIVIDER();
 }
 
 void loop()
@@ -35,41 +34,43 @@ void loop()
   float humidity = dht.readHumidity();
   sgp.setHumidity(Utilities::getAbsoluteHumidity(temperature, humidity));
 
-  if (!sgp.IAQmeasure()) {
-    Serial.println("Measurement failed");
-  }
+  if (!sgp.IAQmeasure()) Serial.printf("%s CO2 Measurement failed.", CO2_SENSOR);
+  if (!sgp.IAQmeasureRaw()) Serial.printf("%s Raw Measurement failed.", CO2_SENSOR);
 
-  if (!sgp.IAQmeasureRaw()) {
-    Serial.println("Raw Measurement failed");
-  }
+  if (!isnan(temperature) && !isnan(humidity)) 
+  {
+    digitalWrite(LED_PIN, HIGH);
 
-  if (!isnan(temperature) && !isnan(humidity)) {
-    Pin::setState(LED_PIN, HIGH);
+    std::vector<std::pair<std::string, variant<float, uint16_t>>> measurements = {
+      {"Temperature", temperature},
+      {"Humidity", humidity},
+      {"Carbon Dioxide", sgp.eCO2},
+      {"TVOC", sgp.TVOC},
+      {"Ethanol", sgp.rawEthanol},
+      {"Hydrogen", sgp.rawH2}
+    };
 
     sensor.clearFields();
-    sensor.addField("Temperature", temperature);
-    sensor.addField("Humidity", humidity);
-    sensor.addField("Carbon Dioxide", sgp.eCO2);
-    sensor.addField("TVOC", sgp.TVOC);
-    sensor.addField("Ethanol", sgp.rawEthanol);
-    sensor.addField("Hydrogen", sgp.rawH2);
-
-    Serial.printf("Writing: %s\n", client.pointToLineProtocol(sensor).c_str());
-
-    if (WiFi.status() != WL_CONNECTED) {
-      Serial.println("Wifi connection lost");
+    for (const auto& pair : measurements) 
+    {
+      auto measurement = pair.first;
+      auto value = pair.second;
+      apply_visitor(Visitor(measurement), value);
     }
 
-    if (!client.writePoint(sensor)) {
-      Serial.printf("InfluxDB write failed: %s\n", client.getLastErrorMessage().c_str());
-    }
+    Serial.printf("Writing: %s.\n", client.pointToLineProtocol(sensor).c_str());
 
-    Serial.printf("Waiting %dms...\n", DELAY);
-    Serial.printf("%s\n", DIVIDER);
+    if (WiFi.status() != WL_CONNECTED) Serial.println("Wifi connection lost.");
+    if (!client.writePoint(sensor)) Serial.printf("InfluxDB write failed: %s.\n", client.getLastErrorMessage().c_str());
+    
+    Serial.printf("Waiting %d seconds before recording next reading...\n", DELAY / 1000);
+    PRINT_DIVIDER();
 
-    Pin::setState(LED_PIN, LOW);
+    digitalWrite(LED_PIN, LOW);
     delay(DELAY);
-  } else {
+  } 
+  else 
+  {
     Serial.printf("Temperature: %f Humidity: %f\n", temperature, humidity);
   }
 }

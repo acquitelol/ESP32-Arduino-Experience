@@ -2,9 +2,9 @@
   "name": "rosies-arduino-test",
   "version": "1.0.0",
   "scripts": {
-    "build": "pio run -t upload",
-    "monitor": "pio device monitor --filter time",
+    "build": "clear && pio run -t upload",
+    "monitor": "clear && pio device monitor",
     "start": "yarn build && yarn monitor"
   },
-  "license": "GPL-3.0"
+  "license": "MIT"
 }
