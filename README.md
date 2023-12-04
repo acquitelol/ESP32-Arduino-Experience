@@ -1,5 +1,5 @@
 # Esp-32 Sensor Records
-### A project which records various metrics, including
+## A PlatformIO project which records various metrics, such as:
 - Temperature
 - Humidity
 - Carbon Dioxide
@@ -7,8 +7,7 @@
 - Ethanol
 - Hydrogen
 
-### This project is built with **PlatformIO**, using the **Arduino** framework.
-This uses the following physical modules:
+#### This uses the following physical modules:
 - ESP32 for running the binary via USB, the core of the project
 - DHT22 for recording Temperature and Humidity (aswell as calculating Absolute Humidity for the SGP30)
 - SGP30 for recording Carbon Dioxide, Ethanol, etc
@@ -27,7 +26,7 @@ std::vector<std::pair<std::string, variant<float, uint16_t>>> measurements = {
   {"Hydrogen", sgp.rawH2}
 };
 ```
-Afterwards, a Visitor is created, available in the Internal namespace:
+Afterwards, a Visitor is created, available in the Internal namespace, which adds the field provided when the value is called on it:
 ```cpp
 struct Visitor 
 {
@@ -53,6 +52,27 @@ for (const auto& pair : measurements)
   auto value = pair.second;
   apply_visitor(Visitor(measurement), value);
 }
+```
+
+<hr />
+
+### About sending the recordings to InfluxDB:
+The module first connects to the InfluxDB instance, using this call inside Internal.h
+```cpp
+InfluxDBClient client(INFLUXDB_HOST, INFLUXDB_ORGANISATION, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
+```
+Note that all of the constants are inside of file called `auth.h` which is gitignored.
+
+During runtime setup, the module validates that it has successfully connected to the database:
+```cpp
+client.validateConnection()
+    ? Serial.printf("Connected to InfluxDB: %s.\n", client.getServerUrl().c_str())
+    : Serial.printf("InfluxDB connection failed: %s.\n", client.getLastErrorMessage().c_str());
+```
+
+When writing, it simply attempts to write to the point defined in the authentication header, and logs if it fails.
+```cpp
+if (!client.writePoint(sensor)) Serial.printf("InfluxDB write failed: %s.\n", client.getLastErrorMessage().c_str());
 ```
 
 <hr />
