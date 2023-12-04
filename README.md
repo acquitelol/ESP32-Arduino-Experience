@@ -14,6 +14,18 @@
 
 <hr />
 
+#### Regarding authentication
+For security purposes, the authentication header (`auth.h`) has been gitignored and is not being actively committed to this repository.
+For personal usage, the constants inside this file include:
+- `INFLUXDB_HOST` - A host/resolvent which directly points to the InfluxDB instance, usually started locally
+- `INFLUXDB_BUCKET` - The bucket for readings, in this case it is called `Sensor-Readings` locally
+- `INFLUXDB_ORGANISATION` - The organisation provided when creating the InfluxDB instance
+- `INFLUXDB_USER` - The username chosen when creating the InfluxDB instance
+- `INFLUXDB_PASS` - The password chosen when creating the InfluxDB instance
+- `INFLUXDB_TOKEN` - The token to authenticate the InfluxDB instance to connect to the Arduino
+- `WIFI_SSID` - The WiFi name, used to connect to the WiFi network
+- `WIFI_PASSWORD` - The password used to connect to the WiFi network provided above
+
 #### This project uses the variant library, as INO C++ is outdated and there is no official variant type.
 This is implemented by creating a vector of pairs of strings and variants, where the type can either be a float or an integer.
 ```cpp
@@ -61,7 +73,7 @@ The module first connects to the InfluxDB instance, using this call inside Inter
 ```cpp
 InfluxDBClient client(INFLUXDB_HOST, INFLUXDB_ORGANISATION, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
 ```
-Note that all of the constants are inside of file called `auth.h` which is gitignored.
+Note that all of the constants above are inside of a file called `auth.h` which is gitignored. [More information](https://github.com/acquitelol/esp32-sensor-records#regarding-authentication)
 
 During runtime setup, the module validates that it has successfully connected to the database:
 ```cpp
